@@ -25,12 +25,7 @@ variable "subnet_region" {
     default = "us-central1"
 }
 
-variable "" {
-    type = 
-    default = 
-}
-
-variable "" {
-    type = 
-    default = 
+variable "router_name" {
+    type = string
+    default = "my-router"
 }
