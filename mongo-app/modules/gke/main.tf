@@ -1,7 +1,7 @@
 terraform {
   backend "gcs" {
     bucket = "mongo-app-bucketzz"
-    prefix = "modules"
+    prefix = "gke"
     credentials = "C:\\Users\\hansj\\Downloads\\terraform-course-key.json"
   }
   required_providers {
@@ -50,10 +50,8 @@ resource "google_container_cluster" "primary" {
     }
 
     logging_config {
-      enable_components = [ "APISERVER", "CONTROLLER_MANAGER", "SCHEDULER" ]
+      enable_components = [ "APISERVER", "CONTROLLER_MANAGER", "SCHEDULER", "SYSTEM_COMPONENTS" ]
     }
-
-    logging_service = "logging.googleapis.com/kubernetes"
 }
 
 resource "google_container_node_pool" "node_pool" {
@@ -81,4 +79,31 @@ resource "google_container_node_pool" "node_pool" {
       disk_size_gb = var.node_config["disk_size_gb"]
       disk_type = var.node_config["disk_type"]
     }
+}
+
+resource "google_storage_bucket" "logging_bucket" {
+  name = var.logging_bucket_name
+  location = "US"
+  public_access_prevention = "enforced"
+  storage_class = "STANDARD"
+  soft_delete_policy {
+    retention_duration_seconds = 604800
+  }
+}
+
+resource "google_logging_project_sink" "sink" {
+  for_each = var.kubernetes_logging_components
+  name = "my-logging-sink-${each.value}"
+  destination = "storage.googleapis.com/${google_storage_bucket.logging_bucket.name}"
+  filter = "resource.type=\"k8s_control_plane_component\" resource.labels.component_name=\"${each.value}\" resource.labels.location=\"${google_container_cluster.primary.location}\" resource.labels.cluster_name=\"${google_container_cluster.primary.name}\""
+  unique_writer_identity = false 
+}
+
+resource "google_project_iam_binding" "binding" {
+  project = var.gcp_project
+  role = "roles/storage.objectCreator"
+
+  members = [
+    "serviceAccount:cloud-logs@system.gserviceaccount.com"
+  ]
 }

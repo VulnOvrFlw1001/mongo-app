@@ -37,12 +37,12 @@ variable "master_ipv4_cidr_block" {
 
 variable "pods_ip_cidr_block" {
     type = string
-    default = "192.168.10.0/24"
+    default = "192.168.8.0/21"
 }
 
 variable "services_ip_cidr_block" {
     type = string
-    default = "192.168.10.0/24"
+    default = "192.168.16.0/24"
 }
 
 variable "node_pool_name" {
@@ -76,4 +76,14 @@ variable "node_config" {
         disk_size_gb = 100
         disk_type = "pd-standard"
     }
+}
+
+variable "logging_bucket_name" {
+    type = string
+    default = "my-logging-bucket-kubernetes-core-components"
+}
+
+variable "kubernetes_logging_components" {
+    type = set(string)
+    default = [ "apiserver", "scheduler", "control-manager" ]
 }
