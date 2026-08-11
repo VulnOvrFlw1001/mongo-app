@@ -55,3 +55,30 @@ resource "google_container_cluster" "primary" {
 
     logging_service = "logging.googleapis.com/kubernetes"
 }
+
+resource "google_container_node_pool" "node_pool" {
+    name = var.node_pool_name
+    cluster = google_container_cluster.primary.name
+    location = var.cluster_location
+
+    initial_node_count = 1
+    autoscaling {
+      max_node_count = var.node_autoscaler["enabled"] == true ? var.node_autoscaler["max_count"] : null
+      min_node_count = var.node_autoscaler["enabled"] == true ? var.node_autoscaler["min_count"] : null
+
+    }
+    management {
+      auto_repair = true
+      auto_upgrade = true
+    }
+    upgrade_settings {
+      max_surge = 1
+      max_unavailable = 1
+    }
+    node_config {
+      machine_type = var.node_config["machine_type"]
+      image_type = var.node_config["image_type"]
+      disk_size_gb = var.node_config["disk_size_gb"]
+      disk_type = var.node_config["disk_type"]
+    }
+}

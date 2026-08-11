@@ -44,3 +44,36 @@ variable "services_ip_cidr_block" {
     type = string
     default = "192.168.10.0/24"
 }
+
+variable "node_pool_name" {
+    type = string
+    default = "my-node-pool"
+}
+
+variable "node_autoscaler" {
+    type = object({
+        enabled = bool
+        min_count = number
+        max_count = number
+    })
+    default = {
+        enabled = true
+        min_count = 0
+        max_count = 4
+    }
+}
+
+variable "node_config" {
+    type = object({
+        image_type = string
+        disk_type = string
+        disk_size_gb = number
+        machine_type = string
+    })
+    default = {
+        image_type = "cos_containerd"
+        machine_type = "e2-medium"
+        disk_size_gb = 100
+        disk_type = "pd-standard"
+    }
+}
