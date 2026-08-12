@@ -52,6 +52,10 @@ resource "google_container_cluster" "primary" {
     logging_config {
       enable_components = [ "APISERVER", "CONTROLLER_MANAGER", "SCHEDULER", "SYSTEM_COMPONENTS" ]
     }
+
+    workload_identity_config {
+      workload_pool = "${var.gcp_project}.svc.id.goog"
+}
 }
 
 resource "google_container_node_pool" "node_pool" {
@@ -78,6 +82,9 @@ resource "google_container_node_pool" "node_pool" {
       image_type = var.node_config["image_type"]
       disk_size_gb = var.node_config["disk_size_gb"]
       disk_type = var.node_config["disk_type"]
+      workload_metadata_config {
+        mode = "GKE_METADATA"
+      }
     }
 }
 

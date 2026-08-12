@@ -32,17 +32,18 @@ variable "cluster_subnetwork" {
 
 variable "master_ipv4_cidr_block" {
     type = string
+    #default = "172.16.0.0/12"
     default = "170.16.0.32/28"
 }
 
 variable "pods_ip_cidr_block" {
     type = string
-    default = "192.168.8.0/21"
+    default = "192.168.10.0/24"
 }
 
 variable "services_ip_cidr_block" {
     type = string
-    default = "192.168.16.0/24"
+    default = "192.168.20.0/24"
 }
 
 variable "node_pool_name" {
