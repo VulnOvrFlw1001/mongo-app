@@ -2,7 +2,7 @@ terraform {
   backend "gcs" {
     bucket = "mongo-app-bucketzz"
     prefix = "gke"
-    credentials = "C:\\Users\\hansj\\Downloads\\terraform-course-key.json"
+    credentials = "C:\\Users\\xxx\\Downloads\\terraform-course-key.json"
   }
   required_providers {
     google = {
